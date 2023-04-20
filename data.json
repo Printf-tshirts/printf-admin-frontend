@@ -1,0 +1,54 @@
+{
+  "variants": [
+    {
+      "body_html": "<p>Test</p>",
+      "compare_at_price": null,
+      "price": "1.00",
+      "sku": "test",
+      "title": "Default Title",
+      "sizes": [
+        {
+          "sizeOption": "S",
+          "inventory": 1
+        },
+        {
+          "sizeOption": "M",
+          "inventory": 1
+        },
+        {
+          "sizeOption": "L",
+          "inventory": 1
+        },
+        {
+          "sizeOption": "XL",
+          "inventory": 1
+        }
+      ]
+    },
+    {
+      "body_html": "<p>Test</p>",
+      "compare_at_price": null,
+      "price": "1.00",
+      "sku": "test",
+      "title": "Default Title",
+      "sizes": [
+        {
+          "sizeOption": "S",
+          "inventory": 1
+        },
+        {
+          "sizeOption": "M",
+          "inventory": 1
+        },
+        {
+          "sizeOption": "L",
+          "inventory": 1
+        },
+        {
+          "sizeOption": "XL",
+          "inventory": 1
+        }
+      ]
+    }
+  ]
+}
