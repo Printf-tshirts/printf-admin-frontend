@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Base } from "../../../common/Base";
 import { Button, Carousel, Image, Modal, Table, Tag, message } from "antd";
-import { useHistory } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Button as BootstrapBtn } from "react-bootstrap";
 import { getVariantsAPI } from "../../../api/variants/getVariants.api";
 import updateStatusAPI from "../../../api/variants/updateStatus.api";
 
-export const Variants = ({ location }) => {
-  const history = useHistory();
+export const Variants = () => {
+  const { state } = useLocation();
+  let navigate = useNavigate();
   const [variants, setVariants] = useState([]);
   const [skip, setSkip] = useState(0);
   const [limit, setLimit] = useState(10);
@@ -116,12 +117,13 @@ export const Variants = ({ location }) => {
     },
   ];
   useEffect(() => {
-    if (location.state) {
-      setProduct(location.state.product);
+    console.log("state", state);
+    if (state) {
+      setProduct(state.product);
     } else {
-      history.push("/add-product");
+      navigate("/add-product");
     }
-  }, [location]);
+  }, [state]);
   const fetchVariants = () => {
     getVariantsAPI({ skip, limit, productId: product._id })
       .then((res) => {
@@ -183,8 +185,10 @@ export const Variants = ({ location }) => {
             <Button
               className="my-3"
               onClick={() => {
-                history.push("/add-variants", {
-                  product: product,
+                navigate("/add-variants", {
+                  state: {
+                    product: product,
+                  },
                 });
               }}>
               Add Variants

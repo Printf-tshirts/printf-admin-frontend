@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Base } from "../../../common/Base";
 import { Button, Modal, Table, Tag, message } from "antd";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getProductsAPI } from "../../../api/products/getProducts.api";
 import { Button as BootstrapBtn } from "react-bootstrap";
 import updateStatusAPI from "../../../api/products/updateStatus.api";
@@ -12,7 +12,7 @@ export const Products = () => {
   const [limit, setLimit] = useState(10);
   const [openConfirmStatusModal, setOpenConfirmStatusModal] = useState(false);
   const [currentProduct, setCurrentProduct] = useState({});
-  const history = useHistory();
+  const navigate = useNavigate();
   const fetchProducts = () => {
     getProductsAPI({ skip, limit })
       .then((res) => {
@@ -81,8 +81,10 @@ export const Products = () => {
           <Button
             type="dashed"
             onClick={() => {
-              history.push("/variants", {
-                product: record,
+              navigate("/variants", {
+                state: {
+                  product: record,
+                },
               });
             }}>
             Variants ({record.variants?.length || 0})
@@ -145,7 +147,7 @@ export const Products = () => {
             <Button
               className="my-3"
               onClick={() => {
-                history.push("/add-product");
+                navigate("/add-product");
               }}>
               Add Product
             </Button>

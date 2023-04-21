@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { loginAPI } from "../api/users/login.api";
 import { message } from "antd";
 import { getUserAPI } from "../api/users/users.api";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = React.createContext();
 
@@ -13,7 +13,7 @@ export function useAuth() {
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState();
   const [loading, setLoading] = useState(true);
-  let history = useHistory();
+  let navigate = useNavigate();
   async function getUser() {
     const token = sessionStorage.getItem("token");
     if (token) {
@@ -29,7 +29,7 @@ export function AuthProvider({ children }) {
           sessionStorage.setItem("token", res.data.token);
           message.success("Login successful");
           await getUser();
-          history.push("/");
+          navigate("/");
         } else {
           message.error("Login failed");
         }

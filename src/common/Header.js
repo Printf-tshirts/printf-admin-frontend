@@ -3,10 +3,10 @@ import { Button } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 const Header = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
   return (
     <>
@@ -14,7 +14,7 @@ const Header = () => {
         <Container fluid>
           <Navbar.Brand
             onClick={() => {
-              history.push("/");
+              navigate("/");
             }}
             style={{ cursor: "pointer" }}>
             Printf T-Shirts

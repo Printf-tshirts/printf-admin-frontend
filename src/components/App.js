@@ -1,6 +1,6 @@
 import Login from "./Login";
 import { AuthProvider } from "../contexts/AuthContext";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import PrivateRoute from "./PrivateRoute";
 import { Dashboard } from "./dashboard/Dashboard";
 import { Products } from "./dashboard/Products/Products";
@@ -14,19 +14,17 @@ function App() {
     <div className="App">
       <Router>
         <AuthProvider>
-          <Switch>
-            <PrivateRoute exact path="/" component={Dashboard} />
-            <PrivateRoute exact path="/products" component={Products} />
-            <PrivateRoute exact path="/variants" component={Variants} />
-            <PrivateRoute exact path="/add-product" component={AddProduct} />
-            <PrivateRoute exact path="/add-variants" component={AddVariant} />
-            <PrivateRoute
-              exact
-              path="/product-preview"
-              component={ProductView}
-            />
-            <Route path="/login" component={Login} />
-          </Switch>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route exact path="/" element={<PrivateRoute />}>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/products" element={<Products />} />
+              <Route path="/variants" element={<Variants />} />
+              <Route path="/add-product" element={<AddProduct />} />
+              <Route path="/add-variants" element={<AddVariant />} />
+              <Route path="/product-preview" element={<ProductView />} />
+            </Route>
+          </Routes>
         </AuthProvider>
       </Router>
     </div>

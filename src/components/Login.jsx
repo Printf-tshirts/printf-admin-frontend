@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { Base } from "../common/Base";
 
@@ -10,10 +10,10 @@ export default function Login() {
   const { login, currentUser } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  let history = useHistory();
+  let navigate = useNavigate();
   useState(() => {
     if (currentUser) {
-      history.push("/");
+      navigate("/");
     }
   }, [currentUser]);
 

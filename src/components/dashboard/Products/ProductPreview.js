@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Base } from "../../../common/Base";
 import { getProductAPI } from "../../../api/products/getProduct.api";
 import { Carousel, Image, Select, Table, Tag } from "antd";
+import { useLocation } from "react-router-dom";
 
-export const ProductView = ({ location }) => {
+export const ProductView = () => {
+  const { state } = useLocation();
   const [productId, setProductId] = useState("");
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState(null);
@@ -34,10 +36,10 @@ export const ProductView = ({ location }) => {
     }
   }, [productId]);
   useEffect(() => {
-    if (location.state && location.state?.productId) {
-      setProductId(location.state.productId);
+    if (state && state?.productId) {
+      setProductId(state.productId);
     }
-  }, [location]);
+  }, [state]);
   const sizeColumns = [
     {
       title: "Size",

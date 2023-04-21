@@ -11,8 +11,9 @@ import {
   message,
 } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { useHistory } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { addVariantAPI } from "../../../api/variants/addVariant.api";
+import { LOCAL_BACKEND_URL } from "../../../constants";
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -20,22 +21,23 @@ const getBase64 = (file) =>
     reader.onload = () => resolve(reader.result);
     reader.onerror = (error) => reject(error);
   });
-export const AddVariant = ({ location }) => {
+export const AddVariant = () => {
+  const { state } = useLocation();
   const [form] = Form.useForm();
   const [product, setProduct] = useState({});
-  const history = useHistory();
+  let navigate = useNavigate();
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
   const [imageList, setImageList] = useState([]);
   const [fileList, setFileList] = useState([]);
   useEffect(() => {
-    if (location.state) {
-      setProduct(location.state.product);
+    if (state) {
+      setProduct(state.product);
     } else {
-      history.push("/add-product");
+      navigate("/add-product");
     }
-  }, [location]);
+  }, [state]);
   const sizeOptions = [
     { label: "XS", value: "XS" },
     { label: "S", value: "S" },
@@ -71,7 +73,7 @@ export const AddVariant = ({ location }) => {
     addVariantAPI({ variant })
       .then((res) => {
         message.success("Variants added successfully");
-        history.push(path, { product: product });
+        navigate(path, { state: { product: product } });
         form.resetFields();
         setFileList([]);
         setImageList([]);
@@ -168,7 +170,7 @@ export const AddVariant = ({ location }) => {
               </div>
               <Form.Item label={"Images"} name={"images"}>
                 <Upload
-                  action={`${process.env.REACT_APP_LOCAL_BACKEND_URL}/files/upload-single`}
+                  action={`${LOCAL_BACKEND_URL}/files/upload-single`}
                   headers={{
                     Authorization: `Bearer ${sessionStorage.getItem("token")}`,
                   }}

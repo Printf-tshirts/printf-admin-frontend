@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Base } from "../../../common/Base";
 import { Button, Form, Input, Select, message } from "antd";
 import { addProductAPI } from "../../../api/products/addProduct.api";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getCategoriesAPI } from "../../../api/categories/getCategory.api";
 
 export const AddProduct = () => {
   const [form] = Form.useForm();
   const [categories, setCategories] = useState([]);
-  const history = useHistory();
+  const navigate = useNavigate();
   const titleValue = Form.useWatch("title", { form, preserve: true });
 
   const fetchCategories = () => {
@@ -37,8 +37,10 @@ export const AddProduct = () => {
     addProductAPI(values)
       .then((res) => {
         message.success("Product added successfully");
-        history.push("/add-variants", {
-          product: res.data.product,
+        navigate("/add-variants", {
+          state: {
+            product: res.data.product,
+          },
         });
       })
       .catch((err) => {

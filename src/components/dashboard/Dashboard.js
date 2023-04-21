@@ -2,11 +2,11 @@ import React from "react";
 import { Base } from "../../common/Base";
 import { Card } from "antd";
 import { useAuth } from "../../contexts/AuthContext";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export const Dashboard = () => {
   const { currentUser } = useAuth();
-  const history = useHistory();
+  let navigate = useNavigate();
   return (
     <>
       <Base container={false}>
@@ -15,7 +15,7 @@ export const Dashboard = () => {
           <Card
             title="Products Page"
             onClick={() => {
-              history.push("/products");
+              navigate("/products");
             }}
             style={{
               width: 300,
