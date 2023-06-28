@@ -29,7 +29,7 @@ export const ProductView = () => {
     console.log("currentVariantIndex", currentVariantIndex);
     if (product && product.variants)
       setCurrentVariant({ ...product.variants[currentVariantIndex] });
-  }, [currentVariantIndex]);
+  }, [currentVariantIndex, product]);
   useEffect(() => {
     if (productId) {
       fetchProduct();

@@ -5,13 +5,13 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 export const Dashboard = () => {
-  const { currentUser } = useAuth();
   let navigate = useNavigate();
   return (
     <>
-      <Base container={false}>
-        <div className="m-5">
-          <p>Hello {currentUser.name}!</p>
+      <Base>
+        <h3>Dashboard</h3>
+        <hr />
+        <div className="d-flex justify-content-evenly">
           <Card
             title="Products Page"
             onClick={() => {
@@ -21,9 +21,19 @@ export const Dashboard = () => {
               width: 300,
               cursor: "pointer",
             }}>
-            <p>Card content</p>
-            <p>Card content</p>
-            <p>Card content</p>
+            <p>Manage Products</p>
+            <p>Update Status of Products</p>
+          </Card>
+          <Card
+            title="Orders Page"
+            onClick={() => {
+              navigate("/orders");
+            }}
+            style={{
+              width: 300,
+              cursor: "pointer",
+            }}>
+            <p>Manage Orders</p>
           </Card>
         </div>
       </Base>

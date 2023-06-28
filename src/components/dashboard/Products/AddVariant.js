@@ -1,19 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Base } from "../../../common/Base";
-import {
-  Button,
-  Form,
-  Input,
-  Modal,
-  Select,
-  Space,
-  Upload,
-  message,
-} from "antd";
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { Button, Form, Input, Modal, Select, Upload, message } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import { addVariantAPI } from "../../../api/variants/addVariant.api";
 import { LOCAL_BACKEND_URL } from "../../../constants";
+import { Container } from "react-bootstrap";
+import { getAllColorsAPI } from "../../../api/colors/getAllColors";
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -31,13 +24,27 @@ export const AddVariant = () => {
   const [previewTitle, setPreviewTitle] = useState("");
   const [imageList, setImageList] = useState([]);
   const [fileList, setFileList] = useState([]);
+  const [colors, setColors] = useState([]);
+  const getColorName = (colorId) => {
+    let color = colors.find((color) => color._id === colorId);
+    return color?.name;
+  };
   useEffect(() => {
     if (state) {
       setProduct(state.product);
     } else {
-      navigate("/add-product");
+      navigate("/add-products");
     }
-  }, [state]);
+  }, [state, navigate]);
+  useEffect(() => {
+    getAllColorsAPI()
+      .then((res) => {
+        setColors(res.data.colors);
+      })
+      .catch((err) => {
+        message.error(err.message);
+      });
+  }, []);
   const sizeOptions = [
     { label: "XS", value: "XS" },
     { label: "S", value: "S" },
@@ -56,16 +63,16 @@ export const AddVariant = () => {
         });
       }
     });
-    variant.productId = product._id;
-    variant.title = product.title + " " + variant.color;
-    variant.handle = product.handle + "-" + variant.color;
+    variant.product = product._id;
+    variant.title = product.title + " " + getColorName(variant.color);
+    variant.handle =
+      product.handle + "-" + getColorName(variant.color).toLowerCase();
     variant.images = imageList;
-    variant.productId = product._id;
-    variant.category = product.category;
+    variant.categories = product.categories;
     variant.product_code =
       product.product_code +
       "-" +
-      variant.color?.replace(/\s+/g, "-").toLowerCase();
+      getColorName(variant.color)?.replace(/\s+/g, "-").toLowerCase();
     return variant;
   };
   const handleVariantSubmit = (values, path) => {
@@ -86,7 +93,7 @@ export const AddVariant = () => {
     return (
       <Form.Item
         label={size.label}
-        className="m-2"
+        className="my-2 col-4"
         name={[size.label, "quantity"]}>
         <Input type="number" placeholder="Quantity" />
       </Form.Item>
@@ -127,16 +134,40 @@ export const AddVariant = () => {
   return (
     <>
       <Base container={false}>
-        <div className="container">
+        <h3>Add Variant</h3>
+        <hr />
+        <Container>
           <Form
+            size="large"
+            labelCol={{
+              span: 8,
+            }}
+            wrapperCol={{
+              span: 10,
+            }}
+            layout="horizontal"
             form={form}
             onFinish={(values) => handleVariantSubmit(values, "/variants")}>
             <div className="m-3">
               <h5>Product Title: {product.title}</h5>
               <h5>Color Options:</h5>
               <hr />
-              <Form.Item label={"Color"} name={"color"}>
-                <Input />
+              <Form.Item
+                label={"Color"}
+                name={"color"}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select color",
+                  },
+                ]}>
+                <Select mode="single">
+                  {colors.map((color) => (
+                    <Select.Option value={color._id}>
+                      {color.name}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
               <Form.Item
                 label={"Display Price"}
@@ -164,10 +195,11 @@ export const AddVariant = () => {
               <Form.Item label={"MRP"} name={"compare_at_price"}>
                 <Input type="number" />
               </Form.Item>
-              <h5>Enter Inventory: </h5>
-              <div className="d-flex">
-                {sizeOptions.map((sizeOption) => createSizeField(sizeOption))}
-              </div>
+              <Form.Item label="Inventory">
+                <div className="row">
+                  {sizeOptions.map((sizeOption) => createSizeField(sizeOption))}
+                </div>
+              </Form.Item>
               <Form.Item label={"Images"} name={"images"}>
                 <Upload
                   action={`${LOCAL_BACKEND_URL}/files/upload-single`}
@@ -178,10 +210,17 @@ export const AddVariant = () => {
                   multiple={true}
                   fileList={fileList}
                   onPreview={handlePreview}
+                  onRemove={(file) => {
+                    console.log("file", file);
+                    setImageList(
+                      imageList.filter((image) => image !== file.response.file),
+                    );
+                  }}
                   onChange={handleChange}>
                   {uploadButton}
                 </Upload>
               </Form.Item>
+
               <Button
                 className="mx-4"
                 type="dashed"
@@ -195,7 +234,7 @@ export const AddVariant = () => {
               </Button>
             </div>
           </Form>
-        </div>
+        </Container>
         <Modal
           open={previewOpen}
           title={previewTitle}

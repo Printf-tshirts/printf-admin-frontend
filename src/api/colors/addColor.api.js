@@ -1,10 +1,9 @@
 import axios from "axios";
 import { LOCAL_BACKEND_URL } from "../../constants";
 
-export const addProductAPI = (payload) => {
-  console.log(payload);
+export const addColorAPI = (payload) => {
   const token = sessionStorage.getItem("token");
-  return axios.post(`${LOCAL_BACKEND_URL}/products/add-product`, payload, {
+  return axios.post(`${LOCAL_BACKEND_URL}/colors/add-color`, payload, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

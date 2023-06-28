@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Base } from "../../../common/Base";
-import { Button, Carousel, Image, Modal, Table, Tag, message } from "antd";
+import { Button, Carousel, Image, Modal, Table, message } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button as BootstrapBtn } from "react-bootstrap";
 import { getVariantsAPI } from "../../../api/variants/getVariants.api";
@@ -121,9 +121,9 @@ export const Variants = () => {
     if (state) {
       setProduct(state.product);
     } else {
-      navigate("/add-product");
+      navigate("/add-products");
     }
-  }, [state]);
+  }, [state, navigate]);
   const fetchVariants = () => {
     getVariantsAPI({ skip, limit, productId: product._id })
       .then((res) => {
@@ -177,24 +177,22 @@ export const Variants = () => {
   };
   return (
     <>
-      <Base container={false}>
-        <div className="m-5">
-          <h3>Variants of {product.title}</h3>
-          <hr />
-          <div>
-            <Button
-              className="my-3"
-              onClick={() => {
-                navigate("/add-variants", {
-                  state: {
-                    product: product,
-                  },
-                });
-              }}>
-              Add Variants
-            </Button>
-            <Table columns={columns} dataSource={variants} />
-          </div>
+      <Base>
+        <h3>Variants of {product.title}</h3>
+        <hr />
+        <div>
+          <Button
+            className="my-3"
+            onClick={() => {
+              navigate("/add-variants", {
+                state: {
+                  product: product,
+                },
+              });
+            }}>
+            Add Variants
+          </Button>
+          <Table columns={columns} dataSource={variants} />
         </div>
         <Modal
           title="Confirm"

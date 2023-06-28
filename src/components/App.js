@@ -8,6 +8,12 @@ import { AddProduct } from "./dashboard/Products/AddProduct";
 import { AddVariant } from "./dashboard/Products/AddVariant";
 import { Variants } from "./dashboard/Products/Variants";
 import { ProductView } from "./dashboard/Products/ProductPreview";
+import { Orders } from "./dashboard/Orders/Orders";
+import { SingleOrder } from "./dashboard/Orders/SingleOrder";
+import { AddCoupon } from "./dashboard/Coupons/AddCoupon";
+import { ViewCoupons } from "./dashboard/Coupons/ViewCoupons";
+import { ViewColors } from "./dashboard/Master/Color/ViewColors";
+import { AddColor } from "./dashboard/Master/Color/AddColor";
 
 function App() {
   return (
@@ -20,9 +26,15 @@ function App() {
               <Route path="/" element={<Dashboard />} />
               <Route path="/products" element={<Products />} />
               <Route path="/variants" element={<Variants />} />
-              <Route path="/add-product" element={<AddProduct />} />
+              <Route path="/orders" element={<Orders />} />
+              <Route path="/orders/:orderHandle" element={<SingleOrder />} />
+              <Route path="/add-products" element={<AddProduct />} />
               <Route path="/add-variants" element={<AddVariant />} />
               <Route path="/product-preview" element={<ProductView />} />
+              <Route path="/coupons" element={<ViewCoupons />} />
+              <Route path="/add-coupons" element={<AddCoupon />} />
+              <Route path="/color/view-colors" element={<ViewColors />} />
+              <Route path="/color/add-color" element={<AddColor />} />
             </Route>
           </Routes>
         </AuthProvider>

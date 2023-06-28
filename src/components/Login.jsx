@@ -1,12 +1,10 @@
 import React, { useRef, useState } from "react";
-import { Form, Button, Card, Alert } from "react-bootstrap";
+import { Button, Card, Alert, Container } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { Base } from "../common/Base";
+import { Form, Input } from "antd";
 
 export default function Login() {
-  const emailRef = useRef();
-  const passwordRef = useRef();
   const { login, currentUser } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -17,12 +15,11 @@ export default function Login() {
     }
   }, [currentUser]);
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function handleSubmit(values) {
     try {
       setError("");
       setLoading(true);
-      await login(emailRef.current.value, passwordRef.current.value);
+      await login(values.email, values.password);
     } catch (e) {
       console.log(e);
       setError(e.message);
@@ -32,28 +29,31 @@ export default function Login() {
 
   return (
     <>
-      <Base>
-        <Card>
-          <Card.Body>
-            <h2 className="text-center mb-4">Log in</h2>
-            <hr />
-            {error && <Alert variant="danger">{error}</Alert>}
-            <Form onSubmit={handleSubmit}>
-              <Form.Group id="email">
-                <Form.Label>Email</Form.Label>
-                <Form.Control type="email" ref={emailRef} required />
-              </Form.Group>
-              <Form.Group id="password">
-                <Form.Label>Password</Form.Label>
-                <Form.Control type="password" ref={passwordRef} required />
-              </Form.Group>
-              <Button disabled={loading} type="submit" className="w-100">
-                Log In
-              </Button>
-            </Form>
-          </Card.Body>
-        </Card>
-      </Base>
+      <div className="d-flex justify-content-center align-items-center">
+        <Container className="w-25 m-5">
+          <Card>
+            <Card.Body>
+              <h2 className="text-center mb-4">Log in</h2>
+              <Form onFinish={handleSubmit}>
+                <Form.Item name={"email"} label="Email">
+                  <Input type={"email"} placeholder="johndoe@gmail.com" />
+                </Form.Item>
+                <Form.Item name={"password"} label="Password">
+                  <Input.Password placeholder="********" />
+                </Form.Item>
+                {error && <Alert variant="danger">{error}</Alert>}
+                <Button
+                  disabled={loading}
+                  className="w-100"
+                  type="primary"
+                  htmlType="submit">
+                  Log In
+                </Button>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Container>
+      </div>
     </>
   );
 }

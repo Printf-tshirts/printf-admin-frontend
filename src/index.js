@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import App from "./components/App";
 import "antd/dist/reset.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./custom.css";
 
 ReactDOM.render(
   <React.StrictMode>

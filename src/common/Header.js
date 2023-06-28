@@ -33,9 +33,6 @@ const Header = () => {
                   }}>
                   Logout
                 </Button>
-                <Link to="/products" className="mx-3 btn btn-primary">
-                  Products
-                </Link>
               </Nav>
             )}
           </Navbar.Collapse>

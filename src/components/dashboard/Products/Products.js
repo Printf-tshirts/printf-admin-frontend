@@ -29,7 +29,11 @@ export const Products = () => {
   useEffect(() => {
     fetchProducts();
   }, []);
-
+  const createCategories = (categories) => {
+    return categories.map((category) => {
+      return <Tag key={category._id}>{category.title}</Tag>;
+    });
+  };
   const updateProductStatus = (product) => {
     updateStatusAPI({ id: product._id, status: !product.isActive })
       .then((res) => {
@@ -55,7 +59,7 @@ export const Products = () => {
     {
       title: "Category",
       key: "category",
-      render: (text, record) => <span>{record.category.title}</span>,
+      render: (text, record) => createCategories(record.categories),
     },
     {
       title: "Product Code",
@@ -139,20 +143,18 @@ export const Products = () => {
 
   return (
     <>
-      <Base container={false}>
-        <div className="m-5">
-          <h3>Products Page</h3>
-          <hr />
-          <div>
-            <Button
-              className="my-3"
-              onClick={() => {
-                navigate("/add-product");
-              }}>
-              Add Product
-            </Button>
-            <Table columns={columns} dataSource={products} />
-          </div>
+      <Base>
+        <h3>Products</h3>
+        <hr />
+        <div>
+          <Button
+            className="my-3"
+            onClick={() => {
+              navigate("/add-products");
+            }}>
+            Add Product
+          </Button>
+          <Table columns={columns} dataSource={products} />
         </div>
         <Modal
           title="Confirm"
