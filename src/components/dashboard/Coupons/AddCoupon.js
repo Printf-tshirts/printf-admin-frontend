@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Base } from "../../../common/Base";
 import { Button, Form, Input, Select, message, DatePicker } from "antd";
 import { Option } from "antd/es/mentions";
@@ -10,7 +10,6 @@ const { RangePicker } = DatePicker;
 
 export const AddCoupon = () => {
   const [form] = Form.useForm();
-  const discountTypeRef = useRef();
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const handleAddCoupon = (values) => {
