@@ -9,7 +9,7 @@ export const Dashboard = () => {
   return (
     <>
       <Base>
-        <h3>Dashboard</h3>
+        <h3>Dashboard Jai</h3>
         <hr />
         <div className="d-flex justify-content-evenly">
           <Card
