@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Button as BootstrapBtn } from "react-bootstrap";
 import { getVariantsAPI } from "../../../api/variants/getVariants.api";
 import updateStatusAPI from "../../../api/variants/updateStatus.api";
+import deleteVariantAPI from "../../../api/variants/deleteVariant.api";
 
 export const Variants = () => {
   const { state } = useLocation();
@@ -17,6 +18,7 @@ export const Variants = () => {
   const [currentVariant, setCurrentVariant] = useState({});
   const [currentImages, setCurrentImages] = useState([]);
   const [openImageModal, setOpenImageModal] = useState(false);
+  const [openDeleteStatusModal, setOpenDeleteStatusModal] = useState(false);
   const columns = [
     {
       title: "Image",
@@ -26,7 +28,10 @@ export const Variants = () => {
           onClick={() => {
             handleImageModal(record.images);
           }}>
-          <img src={record.images[0].src} style={{ width: 100, height: 100 }} />
+          <img
+            src={record.images[0]?.src}
+            style={{ width: 100, height: 100 }}
+          />
         </span>
       ),
     },
@@ -37,8 +42,8 @@ export const Variants = () => {
     },
     {
       title: "Color",
-      dataIndex: "color",
       key: "color",
+      render: (text, record) => <span>{record.color.name}</span>,
     },
     {
       title: "Price",
@@ -103,13 +108,22 @@ export const Variants = () => {
           <BootstrapBtn
             variant="outline-warning"
             className="mx-1"
-            onClick={() => {}}>
+            onClick={() => {
+              navigate("/add-variants", {
+                state: {
+                  variant: record,
+                  product,
+                },
+              });
+            }}>
             Edit
           </BootstrapBtn>
           <BootstrapBtn
             className="mx-1"
             variant="outline-danger"
-            onClick={() => {}}>
+            onClick={() => {
+              confirmDeleteModal(record);
+            }}>
             Delete
           </BootstrapBtn>
         </span>
@@ -158,6 +172,13 @@ export const Variants = () => {
   const cancelImageModel = () => {
     setOpenImageModal(false);
   };
+  const cancelDeleteStatusModal = () => {
+    setOpenDeleteStatusModal(false);
+  };
+  const confirmDeleteModal = (variant) => {
+    setOpenDeleteStatusModal(true);
+    setCurrentVariant(variant);
+  };
 
   const updateVariantStatus = (variant) => {
     console.log("variant", variant);
@@ -175,6 +196,20 @@ export const Variants = () => {
         setOpenConfirmStatusModal(false);
       });
   };
+  const deleteVariant = (variant) => {
+    deleteVariantAPI({ id: variant._id })
+      .then((res) => {
+        if (res.status === 200) {
+          message.success("Variant deleted successfully");
+          fetchVariants();
+          setOpenDeleteStatusModal(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <>
       <Base>
@@ -229,6 +264,16 @@ export const Variants = () => {
               </div>
             </div>
           </div>
+        </Modal>
+        <Modal
+          title="Delete Variant"
+          okText="Confirm"
+          open={openDeleteStatusModal}
+          onCancel={cancelDeleteStatusModal}
+          onOk={() => deleteVariant(currentVariant)}>
+          Are you sure you want to delete <b>{currentVariant.title}</b>?
+          <br />
+          <b>This action cannot be undone.</b>
         </Modal>
       </Base>
     </>

@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Base } from "../../../common/Base";
 import { Button, Form, Input, Modal, Select, Upload, message } from "antd";
 import { addProductAPI } from "../../../api/products/addProduct.api";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getCategoriesAPI } from "../../../api/categories/getCategory.api";
 import { Container } from "react-bootstrap";
 import { LOCAL_BACKEND_URL } from "../../../constants";
 import { PlusOutlined } from "@ant-design/icons";
+import updateProductAPI from "../../../api/products/updateProduct.api";
 
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -16,6 +17,7 @@ const getBase64 = (file) =>
     reader.onerror = (error) => reject(error);
   });
 export const AddProduct = () => {
+  const { state } = useLocation();
   const [form] = Form.useForm();
   const [categories, setCategories] = useState([]);
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -25,7 +27,34 @@ export const AddProduct = () => {
   const [fileList, setFileList] = useState([]);
   const navigate = useNavigate();
   const titleValue = Form.useWatch("title", { form, preserve: true });
-
+  useEffect(() => {
+    if (state?.product) {
+      form.setFieldsValue({
+        title: state.product.title,
+        body_html: state.product.body_html,
+        categories: state.product.categories.map((category) => category._id),
+        price: state.product.price,
+        compare_at_price: state.product.compare_at_price,
+        product_code: state.product.product_code,
+        tags: state.product.tags.join(","),
+      });
+      setCategories(state.product.categories);
+      setImageList(state.product.images);
+      setFileList(
+        state.product.images.map((image) => ({
+          uid: image._id,
+          name: image.src,
+          status: "done",
+          response: {
+            file: {
+              url: image.src,
+            },
+          },
+          url: image.src,
+        })),
+      );
+    }
+  }, [state, form]);
   const fetchCategories = () => {
     getCategoriesAPI()
       .then((res) => {
@@ -50,18 +79,29 @@ export const AddProduct = () => {
   const handleProductSubmit = (values) => {
     values.tags = values.tags.split(",").map((tag) => tag.trim());
     values.images = imageList;
-    addProductAPI(values)
-      .then((res) => {
-        message.success("Product added successfully");
-        navigate("/add-variants", {
-          state: {
-            product: res.data.product,
-          },
+    if (state?.product) {
+      updateProductAPI(state.product._id, values)
+        .then((res) => {
+          message.success("Product updated successfully");
+          navigate("/products");
+        })
+        .catch((err) => {
+          message.error(err.message);
         });
-      })
-      .catch((err) => {
-        message.error(err.message);
-      });
+    } else {
+      addProductAPI(values)
+        .then((res) => {
+          message.success("Product added successfully");
+          navigate("/add-variants", {
+            state: {
+              product: res.data.product,
+            },
+          });
+        })
+        .catch((err) => {
+          message.error(err.message);
+        });
+    }
   };
   const handleCancel = () => setPreviewOpen(false);
   const handlePreview = async (file) => {

@@ -7,6 +7,7 @@ import { addVariantAPI } from "../../../api/variants/addVariant.api";
 import { LOCAL_BACKEND_URL } from "../../../constants";
 import { Container } from "react-bootstrap";
 import { getAllColorsAPI } from "../../../api/colors/getAllColors";
+import updateVariantAPI from "../../../api/variants/updateVariant.api";
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -36,6 +37,29 @@ export const AddVariant = () => {
       navigate("/add-products");
     }
   }, [state, navigate]);
+  useEffect(() => {
+    if (state.variant) {
+      form.setFieldsValue({
+        color: state.variant.color._id,
+        price: state.variant.price,
+        compare_at_price: state.variant.compare_at_price,
+      });
+      setImageList(state.variant.images);
+      setFileList(
+        state.variant.images.map((image) => ({
+          uid: image._id,
+          name: image.src,
+          status: "done",
+          response: {
+            file: {
+              url: image.src,
+            },
+          },
+          url: image.src,
+        })),
+      );
+    }
+  }, [state.variant, form]);
   useEffect(() => {
     getAllColorsAPI()
       .then((res) => {
@@ -77,17 +101,31 @@ export const AddVariant = () => {
   };
   const handleVariantSubmit = (values, path) => {
     let variant = getVariantPayload(values);
-    addVariantAPI({ variant })
-      .then((res) => {
-        message.success("Variants added successfully");
-        navigate(path, { state: { product: product } });
-        form.resetFields();
-        setFileList([]);
-        setImageList([]);
-      })
-      .catch((err) => {
-        message.error(err.message);
-      });
+    if (state.variant) {
+      updateVariantAPI(state.variant._id, variant)
+        .then((res) => {
+          message.success("Variant updated successfully");
+          navigate(path, { state: { product: product } });
+          form.resetFields();
+          setFileList([]);
+          setImageList([]);
+        })
+        .catch((err) => {
+          message.error(err.message);
+        });
+    } else {
+      addVariantAPI({ variant })
+        .then((res) => {
+          message.success("Variants added successfully");
+          navigate(path, { state: { product: product } });
+          form.resetFields();
+          setFileList([]);
+          setImageList([]);
+        })
+        .catch((err) => {
+          message.error(err.message);
+        });
+    }
   };
   const createSizeField = (size) => {
     return (
@@ -113,7 +151,7 @@ export const AddVariant = () => {
   const handleChange = ({ fileList: newFileList }) => {
     newFileList?.forEach((file) => {
       if (file.status === "done") {
-        if (!imageList.includes(file.response.file)) {
+        if (!imageList.includes(file?.response?.file)) {
           setImageList((imageList) => [...imageList, file.response.file]);
         }
       }

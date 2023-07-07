@@ -5,13 +5,16 @@ import { useNavigate } from "react-router-dom";
 import { getProductsAPI } from "../../../api/products/getProducts.api";
 import { Button as BootstrapBtn } from "react-bootstrap";
 import updateStatusAPI from "../../../api/products/updateStatus.api";
+import deleteProductAPI from "../../../api/products/deleteProduct.api";
 
 export const Products = () => {
   const [products, setProducts] = useState([]);
   const [skip, setSkip] = useState(0);
   const [limit, setLimit] = useState(10);
   const [openConfirmStatusModal, setOpenConfirmStatusModal] = useState(false);
+  const [openDeleteStatusModal, setOpenDeleteStatusModal] = useState(false);
   const [currentProduct, setCurrentProduct] = useState({});
+
   const navigate = useNavigate();
   const fetchProducts = () => {
     getProductsAPI({ skip, limit })
@@ -47,6 +50,21 @@ export const Products = () => {
         console.log(err);
         message.error(err.response.data.message);
         setOpenConfirmStatusModal(false);
+      });
+  };
+  const deleteProduct = (product) => {
+    deleteProductAPI({ id: product._id })
+      .then((res) => {
+        if (res.status === 200) {
+          message.success("Product deleted successfully");
+          fetchProducts();
+          setOpenDeleteStatusModal(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        message.error(err.response.data.message);
+        setOpenDeleteStatusModal(false);
       });
   };
 
@@ -120,13 +138,17 @@ export const Products = () => {
           <BootstrapBtn
             variant="outline-warning"
             className="mx-1"
-            onClick={() => {}}>
+            onClick={() => {
+              navigate("/add-products", { state: { product: record } });
+            }}>
             Edit
           </BootstrapBtn>
           <BootstrapBtn
             className="mx-1"
             variant="outline-danger"
-            onClick={() => {}}>
+            onClick={() => {
+              confirmDeleteModal(record);
+            }}>
             Delete
           </BootstrapBtn>
         </span>
@@ -138,6 +160,13 @@ export const Products = () => {
   };
   const confirmStatusModal = (product) => {
     setOpenConfirmStatusModal(true);
+    setCurrentProduct(product);
+  };
+  const cancelDeleteStatusModal = () => {
+    setOpenDeleteStatusModal(false);
+  };
+  const confirmDeleteModal = (product) => {
+    setOpenDeleteStatusModal(true);
     setCurrentProduct(product);
   };
 
@@ -164,6 +193,16 @@ export const Products = () => {
           onOk={() => updateProductStatus(currentProduct)}>
           Are you sure you want to make {currentProduct.title} as{" "}
           <b>{currentProduct.isActive ? "in-active" : "active"}</b>
+        </Modal>
+        <Modal
+          title="Delete Product"
+          okText="Confirm"
+          open={openDeleteStatusModal}
+          onCancel={cancelDeleteStatusModal}
+          onOk={() => deleteProduct(currentProduct)}>
+          Are you sure you want to delete <b>{currentProduct.title}</b> and all
+          its variants? <br />
+          <b>This action cannot be undone.</b>
         </Modal>
       </Base>
     </>
