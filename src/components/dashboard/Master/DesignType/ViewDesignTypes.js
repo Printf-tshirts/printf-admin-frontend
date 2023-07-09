@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Base } from "../../../../common/Base";
 import { Button, Table } from "antd";
-import { getAllColorsAPI } from "../../../../api/colors/getAllColors.api";
 import { useNavigate } from "react-router-dom";
+import { getAllDesignTypesAPI } from "../../../../api/designTypes/getAllDesignTypes.api";
 
-export const ViewColors = () => {
+export const ViewDesignTypes = () => {
   const navigate = useNavigate();
-  const [colors, setColors] = useState([]);
+  const [designTypes, setDesignTypes] = useState([]);
   useEffect(() => {
-    getAllColorsAPI().then((res) => {
-      setColors(res.data.colors);
+    getAllDesignTypesAPI().then((res) => {
+      setDesignTypes(res.data.designTypes);
     });
   }, []);
   const columns = [
@@ -18,25 +18,20 @@ export const ViewColors = () => {
       dataIndex: "name",
       key: "name",
     },
-    {
-      title: "HexCode",
-      dataIndex: "hexCode",
-      key: "hexCode",
-    },
   ];
   return (
     <Base>
-      <h3>View Colors</h3>
+      <h3>View designTypes</h3>
       <hr />
       <Button
         className="my-3"
         onClick={() => {
-          navigate("/color/add-color");
+          navigate("/design-type/add-design-type");
         }}>
-        Add Color
+        Add Design Type
       </Button>
 
-      <Table columns={columns} dataSource={colors} />
+      <Table columns={columns} dataSource={designTypes} />
     </Base>
   );
 };

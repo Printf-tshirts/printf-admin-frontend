@@ -8,6 +8,7 @@ import { Container } from "react-bootstrap";
 import { LOCAL_BACKEND_URL } from "../../../constants";
 import { PlusOutlined } from "@ant-design/icons";
 import updateProductAPI from "../../../api/products/updateProduct.api";
+import { getAllDesignTypesAPI } from "../../../api/designTypes/getAllDesignTypes.api";
 
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -20,6 +21,7 @@ export const AddProduct = () => {
   const { state } = useLocation();
   const [form] = Form.useForm();
   const [categories, setCategories] = useState([]);
+  const [designTypes, setDesignTypes] = useState([]);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
@@ -33,6 +35,9 @@ export const AddProduct = () => {
         title: state.product.title,
         body_html: state.product.body_html,
         categories: state.product.categories.map((category) => category._id),
+        design_types: state.product.design_types.map(
+          (designType) => designType._id,
+        ),
         price: state.product.price,
         compare_at_price: state.product.compare_at_price,
         product_code: state.product.product_code,
@@ -67,8 +72,22 @@ export const AddProduct = () => {
         message.error(err.response.data.message);
       });
   };
+  const fetchDesignTypes = () => {
+    getAllDesignTypesAPI()
+      .then((res) => {
+        if (res.status === 200) {
+          setDesignTypes(res.data.designTypes);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        message.error(err.response.data.message);
+      });
+  };
+
   useEffect(() => {
     fetchCategories();
+    fetchDesignTypes();
   }, []);
   useEffect(() => {
     form.setFieldValue(
@@ -77,6 +96,7 @@ export const AddProduct = () => {
     );
   }, [titleValue, form]);
   const handleProductSubmit = (values) => {
+    console.log("jaii", values);
     values.tags = values.tags.split(",").map((tag) => tag.trim());
     values.images = imageList;
     if (state?.product) {
@@ -182,10 +202,22 @@ export const AddProduct = () => {
               <Form.Item required={true} label="Keywords" name={"tags"}>
                 <Input placeholder="write keywords with , to separate" />
               </Form.Item>
-              <Form.Item required={true} label="Print Size" name={"printSize"}>
+              <Form.Item required={true} label="Print Size" name={"print_size"}>
                 <Select mode="single" disabled={true} defaultValue={"a4"}>
                   <Select.Option value={"a3"}>A3</Select.Option>
                   <Select.Option value={"a4"}>A4</Select.Option>
+                </Select>
+              </Form.Item>
+              <Form.Item
+                required={true}
+                label="Design Types"
+                name={"design_types"}>
+                <Select mode="multiple">
+                  {designTypes.map((designType) => (
+                    <Select.Option value={designType._id}>
+                      {designType.name}
+                    </Select.Option>
+                  ))}
                 </Select>
               </Form.Item>
               <Form.Item label={"Design Image"} required={true} name={"images"}>

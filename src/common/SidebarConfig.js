@@ -64,6 +64,23 @@ export const adminLinks = [
         ],
         access: ["admin"],
       },
+      {
+        title: "Design Type",
+        path: "/design-type",
+        subLinks: [
+          {
+            title: "View Design Types",
+            path: "/design-type/view-design-types",
+            access: ["admin"],
+          },
+          {
+            title: "Add Design Type",
+            path: "/design-type/add-design-type",
+            access: ["admin"],
+          },
+        ],
+        access: ["admin"],
+      },
     ],
     access: ["admin"],
   },

@@ -14,6 +14,8 @@ import { AddCoupon } from "./dashboard/Coupons/AddCoupon";
 import { ViewCoupons } from "./dashboard/Coupons/ViewCoupons";
 import { ViewColors } from "./dashboard/Master/Color/ViewColors";
 import { AddColor } from "./dashboard/Master/Color/AddColor";
+import { ViewDesignTypes } from "./dashboard/Master/DesignType/ViewDesignTypes";
+import { AddDesignType } from "./dashboard/Master/DesignType/AddDesignType";
 
 function App() {
   return (
@@ -35,6 +37,14 @@ function App() {
               <Route path="/add-coupons" element={<AddCoupon />} />
               <Route path="/color/view-colors" element={<ViewColors />} />
               <Route path="/color/add-color" element={<AddColor />} />
+              <Route
+                path="/design-type/view-design-types"
+                element={<ViewDesignTypes />}
+              />
+              <Route
+                path="/design-type/add-design-type"
+                element={<AddDesignType />}
+              />
             </Route>
           </Routes>
         </AuthProvider>

@@ -6,7 +6,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { addVariantAPI } from "../../../api/variants/addVariant.api";
 import { LOCAL_BACKEND_URL } from "../../../constants";
 import { Container } from "react-bootstrap";
-import { getAllColorsAPI } from "../../../api/colors/getAllColors";
+import { getAllColorsAPI } from "../../../api/colors/getAllColors.api";
 import updateVariantAPI from "../../../api/variants/updateVariant.api";
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
