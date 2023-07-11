@@ -11,6 +11,7 @@ export const Products = () => {
   const [products, setProducts] = useState([]);
   const [skip, setSkip] = useState(0);
   const [limit, setLimit] = useState(10);
+  const [productsCount, setProductsCount] = useState(0);
   const [openConfirmStatusModal, setOpenConfirmStatusModal] = useState(false);
   const [openDeleteStatusModal, setOpenDeleteStatusModal] = useState(false);
   const [currentProduct, setCurrentProduct] = useState({});
@@ -22,6 +23,7 @@ export const Products = () => {
         if (res.status === 200) {
           console.log("products", res.data.products);
           setProducts(res.data.products);
+          setProductsCount(res.data.productsCount);
         }
       })
       .catch((err) => {
@@ -31,7 +33,7 @@ export const Products = () => {
   };
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [skip, limit]);
   const createCategories = (categories) => {
     return categories.map((category) => {
       return <Tag key={category._id}>{category.title}</Tag>;
@@ -85,12 +87,12 @@ export const Products = () => {
       key: "product_code",
     },
     {
-      title: "Tags",
-      key: "tags",
+      title: "Design Types",
+      key: "design_types",
       render: (text, record) => (
         <span>
-          {record.tags.map((tag) => (
-            <Tag key={tag}>{tag}</Tag>
+          {record.design_types.map((design) => (
+            <Tag key={design._id}>{design.name}</Tag>
           ))}
         </span>
       ),
@@ -183,7 +185,18 @@ export const Products = () => {
             }}>
             Add Product
           </Button>
-          <Table columns={columns} dataSource={products} />
+          <Table
+            columns={columns}
+            dataSource={products}
+            pagination={{
+              total: productsCount,
+              pageSize: limit,
+              onChange: (page, pageSize) => {
+                setSkip((page - 1) * pageSize);
+                setLimit(pageSize);
+              },
+            }}
+          />
         </div>
         <Modal
           title="Confirm"

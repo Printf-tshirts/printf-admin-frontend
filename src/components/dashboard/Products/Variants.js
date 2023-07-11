@@ -13,6 +13,7 @@ export const Variants = () => {
   const [variants, setVariants] = useState([]);
   const [skip, setSkip] = useState(0);
   const [limit, setLimit] = useState(10);
+  const [variantsCount, setVariantsCount] = useState(0);
   const [product, setProduct] = useState({});
   const [openConfirmStatusModal, setOpenConfirmStatusModal] = useState(false);
   const [currentVariant, setCurrentVariant] = useState({});
@@ -142,8 +143,8 @@ export const Variants = () => {
     getVariantsAPI({ skip, limit, productId: product._id })
       .then((res) => {
         if (res.status === 200) {
-          console.log("variants", res.data.variants);
           setVariants(res.data.variants);
+          setVariantsCount(res.data.variantsCount);
         }
       })
       .catch((err) => {
@@ -155,7 +156,7 @@ export const Variants = () => {
     if (product._id) {
       fetchVariants();
     }
-  }, [product]);
+  }, [product, skip, limit]);
 
   const cancelConfirmStatusModal = () => {
     setOpenConfirmStatusModal(false);
@@ -227,7 +228,18 @@ export const Variants = () => {
             }}>
             Add Variants
           </Button>
-          <Table columns={columns} dataSource={variants} />
+          <Table
+            columns={columns}
+            dataSource={variants}
+            pagination={{
+              total: variantsCount,
+              pageSize: limit,
+              onChange: (page, pageSize) => {
+                setSkip((page - 1) * pageSize);
+                setLimit(pageSize);
+              },
+            }}
+          />
         </div>
         <Modal
           title="Confirm"
