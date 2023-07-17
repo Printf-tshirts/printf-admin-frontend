@@ -91,7 +91,7 @@ export const AddVariant = () => {
     variant.title = product.title + " " + getColorName(variant.color);
     variant.handle =
       product.handle + "-" + getColorName(variant.color).toLowerCase();
-    variant.images = imageList;
+    variant.images = imageList.map((image) => image._id);
     variant.categories = product.categories;
     variant.product_code =
       product.product_code +

@@ -98,7 +98,7 @@ export const AddProduct = () => {
   const handleProductSubmit = (values) => {
     console.log("jaii", values);
     values.tags = values.tags.split(",").map((tag) => tag.trim());
-    values.images = imageList;
+    values.images = imageList.map((image) => image._id);
     if (state?.product) {
       updateProductAPI(state.product._id, values)
         .then((res) => {
